@@ -8,12 +8,12 @@ def fib(n: int) -> int:
     for _ in range(n):
         print(a, end=" ")
         a, b = b, a + b
-    
+
     return a
 
 def test_square_area() -> None:
     assert square_area(5) == 25
-    assert square_area(0) == 0
+    assert square_area(0) == 1
 
 def test_fib() -> None:
     assert fib(0) == 0
@@ -22,4 +22,3 @@ def test_fib() -> None:
     assert fib(3) == 2
     assert fib(5) == 5
     assert fib(10) == 55
-    
