@@ -1,13 +1,17 @@
 name: task-b manual
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       message:
         description: 'Message'
         required: true
         default: 'Hello CI/CD'
-      # TODO: add tag input
+      tag:
+        description: 'Docker image tag'
+        required: true
+        default: 'latest'
+
 permissions:
   contents: read
   packages: write
@@ -19,7 +23,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-      - name: Replace message in index.hml
+      - name: Replace message in index.html
         run: sed -i "s#DEFAULT_MESSAGE#${{ inputs.message }}#" ./task_b/index.html
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -34,6 +38,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: type=ref,event=tag
-      # TODO: build and push docker image
-  # TODO: Add test job
+          tags: |
+            type=ref,event=tag
+            type=manual,tag=${{ inputs.tag }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./task_b
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ inputs.tag }}  # Tag based on input
